@@ -16,7 +16,7 @@ export default function Home() {
         </p>
 
         <Link
-          to="/create"
+          to="/SignUp"
           className="bg-cyan-500 text-zinc-900 px-6 py-3 rounded-lg text-lg font-medium hover:bg-cyan-400 transition"
         >
           Join Us & Share Your Blog

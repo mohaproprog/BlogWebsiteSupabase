@@ -6,6 +6,10 @@ import Blogs from './assets/pages/Blogs';
 import CreateBlog from './assets/pages/CreateBlog';
 import BlogExplore from './assets/pages/BlogExplore';
 import NotFound from './assets/pages/NotFound';
+import SignUp from './assets/pages/SignUp';
+import SignIn from './assets/pages/SignIn';
+import ProtectedPage from './assets/components/ProtectedPage';
+import UnAuth from './assets/components/UnAuth';
 
 
 function App() {
@@ -14,11 +18,30 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path="/" element={<Home/>}/>
-        <Route path="blogs" element={<Blogs/>}/>
-        <Route path="createblog" element={<CreateBlog/>}/>
+        <Route path="blogs" element={<Blogs/>}/> 
         <Route path="blogs/:id" element={<BlogExplore/>}/>
-        <Route path="blogs/:id/:updating" element={<CreateBlog/>}/>
         <Route path="*" element={<NotFound/>}/>
+
+        {/* unathounticated pages */}
+
+        <Route path="/signIn" element={
+          <UnAuth><SignIn/></UnAuth>
+        }/>
+        <Route path="/signUp" element={
+          <UnAuth><SignUp/></UnAuth>
+        }/>
+
+        {/* authenticated and protected routes */}
+        <Route path="createblog" element={
+          <ProtectedPage>
+            <CreateBlog/>
+          </ProtectedPage>}/>
+        <Route path="blogs/:id/:updating" element={
+          <ProtectedPage>
+            <CreateBlog/>
+          </ProtectedPage>
+          }/>
+          
 
       </Routes>
       
