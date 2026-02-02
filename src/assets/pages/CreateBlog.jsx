@@ -1,28 +1,35 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../supabse/supabase.client";
+import useAuth from "../components/UseAuth";
+import Loading from "../components/Loading";
 
 function CreateBlog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [blogLoading, setBlogLoading] = useState(false);
   const navigate = useNavigate();
 
+  const {user,loading} = useAuth();
   // updating blog
   const prams = useParams();
   const {id} = prams;
   console.log(id || "not updating");
   const UpdatingSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setBlogLoading(true)
     try {
-      const {error} = await supabase.from("Blog").update({title,content}).eq("id",id)
+      const {data:updateBlog,error} = await supabase.from("Blog")
+      .update({title,content,Author:user.id})
+      .eq("id",id)
       if(error){
         console.error(error);
         return
         
       }
       console.log("edited and updated the blog");
+      console.log("updateBlog",updateBlog);
+      
       
       
     } catch (error) {
@@ -30,7 +37,7 @@ function CreateBlog() {
       
       
     }finally{
-      setLoading(false)
+      setBlogLoading(false)
     }
     
     
@@ -53,7 +60,7 @@ function CreateBlog() {
   useEffect(()=>{
     if(!id) return
     const fetchOldBlog = async()=>{
-      setLoading(true)
+      setBlogLoading(true)
     try {
       const {data,error} = await supabase.from("Blog")
     .select("*")
@@ -75,7 +82,7 @@ function CreateBlog() {
       
     }
     finally{
-      setLoading(false)
+      setBlogLoading(false)
     }
   }
 
@@ -88,9 +95,10 @@ function CreateBlog() {
   // writing new blog
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setBlogLoading(true)
+    
     try {
-      const {error} = await supabase.from("Blog").insert({title,content})
+      const {error} = await supabase.from("Blog").insert({title,content,Author:user.id})
       if(error){
         console.error(error);
         return
@@ -104,7 +112,7 @@ function CreateBlog() {
       
       
     }finally{
-      setLoading(false)
+      setBlogLoading(false)
     }
     
     
@@ -120,7 +128,7 @@ function CreateBlog() {
     navigate("/blogs");
   };
   
-
+  if(loading) return <Loading/>
   return (
     <div className="min-h-screen bg-zinc-900 text-zinc-100 px-6 py-16 flex justify-center">
       <div className="w-full max-w-2xl">
@@ -164,13 +172,13 @@ function CreateBlog() {
             type="submit"
             className="w-full bg-cyan-500 text-zinc-900 px-6 py-3 rounded-lg font-medium hover:bg-cyan-400 transition"
           >
-            {loading? "Publishing....":"Publish Blog"}
+            {blogLoading? "Publishing....":"Publish Blog"}
           </button>:
           <button
             type="submit"
             className="w-full bg-red-400 text-zinc-900 px-6 py-3 rounded-lg font-medium hover:bg-cyan-400 transition"
           >
-            {loading? "updating....":"Update The Blog"}
+            {blogLoading? "updating....":"Update The Blog"}
           </button>}
         </form>
       </div>

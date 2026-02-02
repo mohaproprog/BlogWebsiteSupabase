@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../../supabse/supabase.client';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "./UseAuth";
+import Loading from "./Loading";
 
 function ProtectedPage({ children }) {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const checker = async () => {
-      const { data: session, error } = await supabase.auth.getSession();
-      if (error || !session?.session) {
-        navigate("/signIn", { replace: true });
-        return; // stop further execution
-      }
-      setLoading(false);
-      console.log(session);
-      
-    };
-    checker();
-  }, [navigate]);
+    if (!loading && !user) {
+      navigate("/signIn", { replace: true });
+    }
+  }, [user, loading, navigate]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading || !user) return <Loading/>;
 
   return <>{children}</>;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabse/supabase.client";
 
 function SignUp() {
@@ -11,7 +11,9 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sucsecc, setSucsecc] = useState(false);
 
+  const navigate = useNavigate();
   // submit form
   const submitForm = async (e) => {
   e.preventDefault();
@@ -39,11 +41,12 @@ function SignUp() {
       setFormError(error.message);
       return;
     }
-    console.log("form secsec...");
+    console.log("form secsessfull...");
     const {data:profileData,error:profileError} = await supabase.from("user")
     .insert({id:authData.user.id,
-      full_Name:fullName,
-      username}
+      full_name:fullName,
+      username,
+    Avatar_url:null}
     )
     if(profileError){
       console.error(profileError);
@@ -51,6 +54,13 @@ function SignUp() {
     }
     console.log(profileData);
     console.log("form and user secsec...");
+    setSucsecc(true);
+    setTimeout(() => {
+      setSucsecc(false)
+      navigate("/signIn");
+      
+    }, 3000);
+
     
     
 
@@ -72,7 +82,39 @@ function SignUp() {
   }
 };
 
+  if (sucsecc) return(
+    <div className="min-h-screen bg-zinc-900 flex items-center justify-center px-6">
+  <div className="w-full max-w-md bg-zinc-800 border border-zinc-700 rounded-2xl p-8 text-center shadow-lg">
 
+    <h2 className="text-2xl font-semibold text-zinc-100 mb-3">
+      Account Created
+    </h2>
+
+    <p className="text-zinc-400 text-sm leading-relaxed">
+      We’ve sent a confirmation email to your inbox.
+      <br />
+      Please verify your email address to activate your account.
+    </p>
+
+    <div className="mt-6 text-sm text-zinc-500">
+      You won’t be able to sign in until your email is confirmed.
+    </div>
+
+    <div className="mt-8">
+      <button
+        disabled
+        className="w-full bg-cyan-500/20 text-cyan-400 py-3 rounded-lg font-semibold cursor-not-allowed"
+      >
+        Waiting for email confirmation
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+  )
   return (
     <div className="min-h-screen bg-zinc-900 flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-zinc-800 rounded-2xl shadow-lg p-8">

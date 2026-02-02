@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import useAuth from "./UseAuth"; // hook import
+import useAuth from "./UseAuth";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth(); // use the hook
 
-  if (loading) return <p>Loading...</p>; // optional loading state
 
   return (
     <nav className="bg-zinc-900 text-zinc-100 border-b border-zinc-800">
@@ -23,7 +22,7 @@ function Navbar() {
             <Link to="/" className="relative hover:after:w-full">Home</Link>
             <Link to="/blogs" className="relative hover:after:w-full">Blogs</Link>
 
-            {user ? (
+            {user && !loading ? (
               <>
                 <Link to="/createblog" className="rounded-md bg-cyan-500 px-4 py-2 text-zinc-900 hover:bg-cyan-400 transition">
                   Create Blog
@@ -55,7 +54,7 @@ function Navbar() {
           <Link to="/" className="block hover:text-cyan-400">Home</Link>
           <Link to="/blogs" className="block hover:text-cyan-400">Blogs</Link>
 
-          {user ? (
+          {user && !loading ? (
             <>
               <Link to="/createblog" className="block bg-cyan-500 text-zinc-900 text-center py-2 rounded-md font-medium">
                 Create Blog

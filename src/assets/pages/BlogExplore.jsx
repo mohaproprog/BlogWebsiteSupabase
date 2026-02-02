@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../supabse/supabase.client";
+import Loading from "../components/Loading";
 
 export default function BlogDetails() {
   const { id } = useParams();
@@ -16,7 +17,18 @@ export default function BlogDetails() {
     try {
       const { data, error } = await supabase
         .from("Blog")
-        .select("*")
+        .select(`
+        id,
+        title,
+        content,
+        created_at,
+        Author,
+        user:Author (
+          id,
+          username,
+          full_name
+        )
+      `)
         .eq("id", id)
         .single();
 
@@ -36,9 +48,7 @@ export default function BlogDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-zinc-100">
-        Loading blog...
-      </div>
+      <Loading/>
     );
   }
 
@@ -80,7 +90,7 @@ export default function BlogDetails() {
           </h1>
 
           <div className="text-sm text-zinc-400">
-            {blog.author || "Anonymous"} ·{" "}
+            {blog.user.full_name || "Anonymous"} ·{" "}
             {new Date(blog.created_at).toLocaleDateString()}
           </div>
         </div>

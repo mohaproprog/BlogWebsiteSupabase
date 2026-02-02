@@ -10,6 +10,7 @@ import SignUp from './assets/pages/SignUp';
 import SignIn from './assets/pages/SignIn';
 import ProtectedPage from './assets/components/ProtectedPage';
 import UnAuth from './assets/components/UnAuth';
+import Profile from './assets/pages/Profile';
 
 
 function App() {
@@ -41,6 +42,12 @@ function App() {
             <CreateBlog/>
           </ProtectedPage>
           }/>
+          <Route path="profile" element={
+            <ProtectedPage>
+            <Profile/>
+          </ProtectedPage>
+          }
+            />
           
 
       </Routes>

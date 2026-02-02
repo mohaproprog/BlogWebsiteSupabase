@@ -1,11 +1,34 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabse/supabase.client";
 
 function SignIn() {
+  const navigate = useNavigate();
+  const [login, setLogin] = useState({ email: "", password: "" });
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const onsubmit = async (e) => {
+    e.preventDefault(); // ✅ prevent page reload
+    setErrorMsg("");
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: login.email,
+      password: login.password,
+    });
+
+    if (error) {
+      console.error(error);
+      setErrorMsg("Email or password is incorrect");
+      return;
+    }
+
+    console.log("Signed in successfully:", login.email);
+    navigate("/blogs"); // redirect after login
+  };
+
   return (
     <div className="min-h-screen bg-zinc-900 flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-zinc-800 rounded-2xl shadow-lg p-8">
-        
         {/* Title */}
         <h1 className="text-3xl font-bold text-zinc-100 text-center mb-2">
           Welcome Back
@@ -14,14 +37,16 @@ function SignIn() {
           Sign in to continue blogging
         </p>
 
-        <form className="space-y-6">
+        <form onSubmit={onsubmit} className="space-y-6">
           {/* Email */}
           <div>
-            <label className="block text-zinc-300 mb-2 text-sm">
-              Email
-            </label>
+            <label className="block text-zinc-300 mb-2 text-sm">Email</label>
             <input
               type="email"
+              value={login.email}
+              onChange={(e) =>
+                setLogin((prev) => ({ ...prev, email: e.target.value }))
+              }
               placeholder="Enter your email"
               className="w-full p-3 rounded-lg bg-zinc-900 text-zinc-100 placeholder-zinc-500 outline-none focus:ring-2 focus:ring-cyan-400"
               required
@@ -30,16 +55,23 @@ function SignIn() {
 
           {/* Password */}
           <div>
-            <label className="block text-zinc-300 mb-2 text-sm">
-              Password
-            </label>
+            <label className="block text-zinc-300 mb-2 text-sm">Password</label>
             <input
               type="password"
+              value={login.password}
+              onChange={(e) =>
+                setLogin((prev) => ({ ...prev, password: e.target.value }))
+              }
               placeholder="Enter your password"
               className="w-full p-3 rounded-lg bg-zinc-900 text-zinc-100 placeholder-zinc-500 outline-none focus:ring-2 focus:ring-cyan-400"
               required
             />
           </div>
+
+          {/* Error Message */}
+          {errorMsg && (
+            <p className="text-red-500 text-sm text-center">{errorMsg}</p>
+          )}
 
           {/* Sign In Button */}
           <button

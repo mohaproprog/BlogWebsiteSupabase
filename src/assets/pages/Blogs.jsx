@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../../supabse/supabase.client";
+import Loading from "../components/Loading";
 
 export default function Blogs() {
   const [loading, setLoading] = useState(false);
@@ -10,11 +11,24 @@ export default function Blogs() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from("Blog")
-        .select("*")
-        .order("created_at", { ascending: false });
+      .from("Blog")
+      .select(`
+        id,
+        title,
+        content,
+        created_at,
+        Author,
+        user:Author (
+          id,
+          username,
+          full_name
+        )
+      `)
+      .order("created_at", { ascending: false });
 
       if (error) return console.error(error);
+      console.log(data);
+      
 
       const blogsWithExcerpt = data.map((blog) => ({
         ...blog,
@@ -37,9 +51,7 @@ export default function Blogs() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-zinc-100">
-        Loading blogs...
-      </div>
+      <Loading/>
     );
   }
 
@@ -74,7 +86,7 @@ export default function Blogs() {
               </p>
 
               <div className="flex justify-between text-xs text-zinc-500 mb-4">
-                <span>{blog.author || "Anonymous"}</span>
+                <span>{blog.user.full_name || "Anonymous"}</span>
                 <span>
                   {new Date(blog.created_at).toLocaleDateString()}
                 </span>
