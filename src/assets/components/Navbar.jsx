@@ -9,15 +9,15 @@ function Navbar() {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
 
-  const fetchingProfile = async () => {
+  useEffect(()=>{
+    const fetchingProfile = async () => {
     if (!user && !loading) return;
 
     try {
       setLoadingProfile(true);
-
       const { data, error } = await supabase
         .from("user")
-        .select("*")
+        .select()
         .eq("id", user.id)
         .single();
 
@@ -34,9 +34,9 @@ function Navbar() {
     }
   };
 
-  useEffect(() => {
-    fetchingProfile();
-  }, [user]);
+  fetchingProfile()
+  },[user,loading])
+
 
   return (
     <nav className="bg-zinc-900 text-zinc-100 border-b border-zinc-800">

@@ -164,6 +164,11 @@ const handleImageUpload =async (e)=>{
     }
 
     console.log("added the profile image sucsess");
+    window.location.reload();
+
+
+      
+
     
 
 }
