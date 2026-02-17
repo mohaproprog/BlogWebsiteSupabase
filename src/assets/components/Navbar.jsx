@@ -11,7 +11,7 @@ function Navbar() {
 
   useEffect(()=>{
     const fetchingProfile = async () => {
-    if (!user && !loading) return;
+    if (!user) return;
 
     try {
       setLoadingProfile(true);
